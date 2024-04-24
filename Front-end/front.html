@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="design.css">
+</head>
+
+<body>
+    <div class="template">
+        <div class="template-layout">
+            <div class="upload-image-layout">
+                <img id="upload-image"/>
+            </div>
+            
+            <div class="upload-button-layout">
+                <div class="container">
+                    <div class="variants">
+                      <div class='file file--upload'>
+                        <label for='input-file'>
+                          <i class="far fa-folder" style="display:inline-block; margin-right:10px;"></i> Upload
+                        </label>
+                        <input id='input-file' type='file' name="files"/>
+                      </div>
+                    </div>
+                  
+                  </div>
+            </div>
+        </div>
+
+        <div class="template-layout">
+            <div class="carousel-layout">
+                
+                <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators" id="carousel-indicator-box">
+                        <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
+                    </ol>
+                    <div class="carousel-inner" id="carusel-image-box">
+                        <div class="carousel-item active">
+                            <img class="carousel-image" src="https://miro.medium.com/v2/resize:fit:1358/1*R84n-IsnUKm-nD5D7_X-BQ.jpeg">
+                        </div>
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-target="#carouselExampleCaptions" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </button>
+
+                    <button class="carousel-control-next" type="button" data-target="#carouselExampleCaptions" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+  <div class="modal fade" id="myModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+              객체 탐지중
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <script>
+    var slideCount=1;
+
+	document.querySelector('#input-file').onchange=(e)=>{
+		const reader = new FileReader();
+		reader.readAsDataURL(e.target.files[0]);
+
+		reader.onload=event=>{
+			$("#upload-image").attr("src",event.target.result);			
+			const base64Encoded=event.target.result.split(",")[1];
+
+            $("#myModal").css("display","block");
+            $("#myModal").addClass("show");
+            $("#myModal").data("data-backdrop","static");
+			
+			const data= new FormData();
+			data.append("base64Encoded",base64Encoded);
+
+			fetch("http://localhost:5000/mask",{method:"POST",body:data})
+			.then(response=>response.json())
+			.then(data=>{
+				$("#myModal").css("display","none");
+                $("#myModal").attr("class","modal fade");
+
+                $(".carousel-item").each(function(){$(this).removeClass("active");});
+                $("li").each(function(){$(this).removeClass("active");});
+
+                const div = document.createElement("div");
+                const img = document.createElement("img");
+
+                div.setAttribute("class","carousel-item active");
+                img.setAttribute("class","carousel-image");
+                img.setAttribute("src","data:image/jpeg;base64,"+data.base64);
+                
+                const li = document.createElement("li");
+                li.setAttribute("data-target","#carouselExampleCaptions");
+                li.setAttribute("data-slide-to",slideCount);
+                li.setAttribute("class","active");
+                slideCount+=1;
+
+                $("#carousel-indicator-box").append(li);
+                div.append(img);
+                $("#carusel-image-box").append(div);
+			});	
+			
+		};
+		
+	};
+	
+  </script>
+</body>
+</html>
