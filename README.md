@@ -34,13 +34,13 @@ Yolo v8을 이용하여 마스크 착용한 사람을 구분하고 판별할 수
 <br/>
 
 ## 실행방법
-> "Backend"
+> "FlaskRestApi"
 >> 파이썬의 프로젝트로 사용합니다.<br/>
 >> 해당 폴더 안에 있는 "app.py"를 실행합니다.<br/>
 >> 필요한 라이브러리를 설치해야 작동합니다. (flask, api.naver_news, bs4, vgg16등)<br/>
 >> 사용된 모델 사이트(https://yolov8.com/)
 
-> "Frontend"
+> "Front-end"
 >> 해당 폴더를 웹 서버로 실행합니다.<br/>
 >> 웹서버는 Visual Studio의 live Sever을 이용해도 됩니다.<br/>
 <br/>
